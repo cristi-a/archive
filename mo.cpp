@@ -1,4 +1,5 @@
 // base either sqrt(n) or power of 2 close to sqrt(n)
+// https://www.pbinfo.ro/probleme/3085/fsecv
 #include <bits/stdc++.h>
 using namespace std;
 const int nmax = 1e5;
