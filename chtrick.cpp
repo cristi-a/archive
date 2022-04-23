@@ -1,4 +1,4 @@
-//atcoder educational dp contest problem z (frog 3)
+// https://atcoder.jp/contests/dp/tasks/dp_z
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
