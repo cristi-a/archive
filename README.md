@@ -1,2 +1,2 @@
 # archive
-algorithm templates for future reference
+templates for future reference
