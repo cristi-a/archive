@@ -19,17 +19,17 @@ void Compute(int left, int right, vector<ll>&w) {
 }
  
 int main() {
-  ios::sync_with_stdio(0);
-  cin.tie(0);
+ 	ios::sync_with_stdio(0);
+  	cin.tie(0);
   
-  int n; cin >> n >> x;
-  for(int i=1; i<=n; i++) cin >> v[i];
-  int mid = n / 2;
-  Compute(1, mid, lhs);
-  Compute(mid+1, n, rhs);
-  sort(rhs.begin(), rhs.end());
-  ll ct = 0;
-  for(auto i : lhs) ct += upper_bound(rhs.begin(), rhs.end(), x-i) - lower_bound(rhs.begin(), rhs.end(), x-i);
-  cout << ct;
-  return 0;
+  	int n; cin >> n >> x;
+  	for(int i=1; i<=n; i++) cin >> v[i];
+  	int mid = n / 2;
+  	Compute(1, mid, lhs);
+  	Compute(mid+1, n, rhs);
+  	sort(rhs.begin(), rhs.end());
+  	ll ct = 0;
+  	for(auto i : lhs) ct += upper_bound(rhs.begin(), rhs.end(), x-i) - lower_bound(rhs.begin(), rhs.end(), x-i);
+  	cout << ct;
+  	return 0;
 }
