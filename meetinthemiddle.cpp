@@ -1,5 +1,5 @@
 // https://cses.fi/problemset/task/1628
-// do not use map if you don't want TLE
+// map = tle
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
