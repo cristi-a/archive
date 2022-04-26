@@ -24,7 +24,7 @@ makef() {
 }
 
 submit() {
-  cp $1.cpp ~/sol.cpp
+  cp $1.cpp ~/sol/sol.cpp
 }
 
 export -f make
