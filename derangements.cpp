@@ -1,4 +1,4 @@
-// Derangements in a sequence
+// Derangements of a sequence
 // D(n) <=> Subfactorial of N
 // D(n) = (D(n-1) + D(n-2)) * (n-1)
 // https://cses.fi/problemset/task/1717
