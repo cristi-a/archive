@@ -1,2 +1,2 @@
 # archive
-templates for future reference
+for future reference
