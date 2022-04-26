@@ -1,5 +1,4 @@
-// using doubles
-// possible without (see chtrick.cpp)
+// w/ doubles
 #include <bits/stdc++.h>
 using namespace std;	
 
