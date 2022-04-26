@@ -5,6 +5,7 @@ set autochdir
 set tabstop=4
 
 color gruvbox
+#https://vimcolorschemes.com/morhetz/gruvbox
 
 nnoremap <F9> :make %< <CR>
 nnoremap <F5> :!./%< <CR>
