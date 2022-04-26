@@ -12,4 +12,4 @@ nnoremap <F4> :! submit "%:r"<CR>
 nnoremap <c-s> :w<CR>
 imap <c-s> <Esc> :w<CR>
 
-ERASE THIS (https://vimcolorschemes.com/morhetz/gruvbox)
+scheme https://vimcolorschemes.com/morhetz/gruvbox
