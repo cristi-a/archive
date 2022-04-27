@@ -2,7 +2,12 @@ set number relativenumber
 set background=dark
 set autoindent
 set autochdir
+
+set expandtab
 set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+
 set ruler
 
 color gruvbox
