@@ -1,4 +1,5 @@
-// https://codeforces.com/blog/entry/53170
+// https://codeforces.com/blog/entry/53170 - flattening tree
+// https://codeforces.com/blog/entry/18051 - segtree with 2 * n memory
 #include <bits/stdc++.h>
 using namespace std;
 const int nmax = 2e5;
@@ -30,34 +31,22 @@ void dfs_hld(int node) {
     out[node] = timer - 1;
 }
 
-void build(int node, int left, int right) {
-    if(left == right) {
-        aint[node] = v[left];
-        return;
-    }
-    int mid = (left + right) / 2;
-    build(node*2, left, mid);
-    build(node*2+1, mid+1, right);
-    aint[node] = max(aint[node*2], aint[node*2+1]);
+void build(int n) {
+    for(int i=1; i<=n; i++) aint[i+n] = v[i];
+    for(int i=n-1; i>=1; i--) aint[i] = max(aint[2*i], aint[2*i+1]);
 }
 
-void update(int node, int left, int right, int pos, int val) {
-    if(left == right) {
-        aint[node] = val;
-        return;
-    }
-    int mid = (left + right) / 2;
-    if(mid >= pos) update(node*2, left, mid, pos, val);
-    if(mid < pos) update(node*2+1, mid+1, right, pos, val);
-    aint[node] = max(aint[node*2], aint[node*2+1]);
+void update(int n, int pos, int val) {
+    for(aint[pos+=n]=val; pos>1; pos/=2) aint[pos/2] = max(aint[pos], aint[pos^1]);
 }
 
-int query(int node, int left, int right, int st, int dr) {
-    if(st <= left and right <= dr) return aint[node];
-    int mid = (left + right) / 2, ans = 0;
-    if(mid >= st) ans = max(ans, query(node*2, left, mid, st, dr));
-    if(mid < dr) ans = max(ans, query(node*2+1, mid+1, right, st, dr));
-    return ans;
+int query(int n, int st, int dr) {
+    int temp = 0;
+    for(st += n, dr += n; st < dr; st/=2, dr/=2) {
+        if(st&1) temp = max(temp, aint[st++]);
+        if(dr&1) temp = max(temp, aint[--dr]);
+    }
+    return temp;
 }
 
 int main() {
@@ -75,21 +64,22 @@ int main() {
     dfs_dim(1);
     dfs_hld(1);
     for(int i=1; i<=n; i++) v[in[i]] = init[i];
-    build(1, 1, n);
+    build(n);
     for(int i=1; i<=q; i++) {
         int type, a, b; cin >> type >> a >> b;
-        if(type == 1) update(1, 1, n, in[a], b);
+        if(type == 1) update(n, in[a], b);
         else {
             int ans = 0;
             while(nxt[a] != nxt[b]) {
                 if(niv[nxt[a]] < niv[nxt[b]]) swap(a, b);
-                ans = max(ans, query(1, 1, n, in[nxt[a]], in[a]));
+                ans = max(ans, query(n, in[nxt[a]], in[a]+1));
                 a = par[nxt[a]];
             }
             if(in[a] > in[b]) swap(a, b);
-            ans = max(ans, query(1, 1, n, in[a], in[b]));
+            ans = max(ans, query(n, in[a], in[b]+1));
             cout << ans << "\n";
         }
     }
     return 0;
 }
+
