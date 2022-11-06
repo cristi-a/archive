@@ -1,116 +1,94 @@
+// https://codeforces.com/blog/entry/53170
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
-const int nmax = 1e5;
-const int lgmax = 16;
+const int nmax = 2e5;
 
 vector<vector<int>> dx(nmax+5);
-int v[nmax+5], niv[nmax+5], under[nmax+5];
+int init[nmax+5], dim[nmax+5], par[nmax+5], nxt[nmax+5], niv[nmax+5];
 
-int cnt = 0, where[nmax+5], above[nmax+5], len[nmax+5], pos[nmax+5];
-vector<vector<int>> path;
-vector<vector<int>> aint;
+int in[nmax+5], out[nmax+5], timer = 1, v[nmax+5];
+int aint[4*nmax+5];
 
-void dfs(int node, int father) {
-    under[node] = 1;
-    niv[node] = niv[father] + 1;
-    int w = -1, mx = 0;
-    for(auto i : dx[node])
-        if(i != father) {
-            dfs(i, node);
-            if(under[i] > mx) {
-                mx = under[i];
-                w = i;
-            }
-            under[node] += under[i];
-        }
-    if(w == -1) {
-        path.emplace_back(vector<int>{node});
-        where[node] = cnt;
-        cnt++;
-    }
-    else {
-        path[where[w]].emplace_back(node);
-        where[node] = where[w];
-        for(auto i : dx[node])
-            if(i != father and i != w)
-                above[where[i]] = node;
+void dfs_dim(int node) {
+    dim[node] = 1;
+    for(auto &i : dx[node]) {
+        dx[i].erase(find(dx[i].begin(), dx[i].end(), node));
+        par[i] = node;
+        niv[i] = niv[node] + 1;
+        dfs_dim(i);
+        dim[node] += dim[i];
+        if(dim[i] > dim[dx[node][0]]) swap(i, dx[node][0]);
     }
 }
 
-bool comp(int a, int b) {
-    return (niv[a] < niv[b]);
+void dfs_hld(int node) {
+    in[node] = timer++;
+    for(auto i : dx[node]) {
+        nxt[i] = (i == dx[node][0] ? nxt[node] : i);
+        dfs_hld(i);
+    }
+    out[node] = timer - 1;
 }
 
-void build(int node, int left, int right, int w) {
+void build(int node, int left, int right) {
     if(left == right) {
-        aint[w][node] = v[path[w][left]];
+        aint[node] = v[left];
         return;
     }
     int mid = (left + right) / 2;
-    build(node*2, left, mid, w);
-    build(node*2+1, mid+1, right, w);
-    aint[w][node] = max(aint[w][node*2], aint[w][node*2+1]);
+    build(node*2, left, mid);
+    build(node*2+1, mid+1, right);
+    aint[node] = max(aint[node*2], aint[node*2+1]);
 }
 
-void update(int node, int left, int right, int ind, int val, int w) {
+void update(int node, int left, int right, int pos, int val) {
     if(left == right) {
-        aint[w][node] = val;
+        aint[node] = val;
         return;
     }
     int mid = (left + right) / 2;
-    if(mid >= ind) update(node*2, left, mid, ind, val, w);
-    if(mid < ind) update(node*2+1, mid+1, right, ind, val, w);
-    aint[w][node] = max(aint[w][node*2], aint[w][node*2+1]);
+    if(mid >= pos) update(node*2, left, mid, pos, val);
+    if(mid < pos) update(node*2+1, mid+1, right, pos, val);
+    aint[node] = max(aint[node*2], aint[node*2+1]);
 }
 
-int query(int node, int left, int right, int st, int dr, int w) {
-    if(st <= left and right <= dr) return aint[w][node];
+int query(int node, int left, int right, int st, int dr) {
+    if(st <= left and right <= dr) return aint[node];
     int mid = (left + right) / 2, ans = 0;
-    if(mid >= st) ans = max(ans, query(node*2, left, mid, st, dr, w));
-    if(mid < dr) ans = max(ans, query(node*2+1, mid+1, right, st, dr, w));
+    if(mid >= st) ans = max(ans, query(node*2, left, mid, st, dr));
+    if(mid < dr) ans = max(ans, query(node*2+1, mid+1, right, st, dr));
     return ans;
 }
 
 int main() {
-    ifstream f("heavypath.in");
-    ofstream g("heavypath.out");
+    ios::sync_with_stdio(0);
+    cin.tie(0);
 
-    int n, q; f >> n >> q;
-    for(int i=1; i<=n; i++) f >> v[i];
+    int n, q; cin >> n >> q;
+    for(int i=1; i<=n; i++) cin >> init[i];
     for(int i=1; i<=n-1; i++) {
-        int x, y; f >> x >> y;
+        int x, y; cin >> x >> y;
         dx[x].emplace_back(y);
         dx[y].emplace_back(x);
     }
-
-    dfs(1, 0);
-    for(int i=0; i<cnt; i++) {
-        sort(path[i].begin(), path[i].end(), comp);
-        len[i] = path[i].size();
-        for(int j=0; j<len[i]; j++) pos[path[i][j]] = j;
-        aint.emplace_back(vector<int>{});
-        aint[i].resize(4*len[i]+5, 0);
-        build(1, 0, len[i]-1, i);
-    }
-
+    nxt[1] = 1;
+    dfs_dim(1);
+    dfs_hld(1);
+    for(int i=1; i<=n; i++) v[in[i]] = init[i];
+    build(1, 1, n);
     for(int i=1; i<=q; i++) {
-        int type, x, y; f >> type >> x >> y;
-        if(type == 0) {
-            int path_id = where[x];
-            update(1, 0, len[path_id]-1, pos[x], y, path_id);
-        }
+        int type, a, b; cin >> type >> a >> b;
+        if(type == 1) update(1, 1, n, in[a], b);
         else {
             int ans = 0;
-            while(where[x] != where[y]) {
-                if(niv[above[where[x]]] < niv[above[where[y]]]) swap(x, y);
-                ans = max(ans, query(1, 0, len[where[x]]-1, 0, pos[x], where[x]));
-                x = above[where[x]];
+            while(nxt[a] != nxt[b]) {
+                if(niv[nxt[a]] < niv[nxt[b]]) swap(a, b);
+                ans = max(ans, query(1, 1, n, in[nxt[a]], in[a]));
+                a = par[nxt[a]];
             }
-            int L = min(pos[x], pos[y]);
-            int R = max(pos[x], pos[y]);
-            ans = max(ans, query(1, 0, len[where[x]]-1, L, R, where[x]));
-            g << ans << "\n";
+            if(in[a] > in[b]) swap(a, b);
+            ans = max(ans, query(1, 1, n, in[a], in[b]));
+            cout << ans << "\n";
         }
     }
     return 0;
