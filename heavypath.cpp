@@ -8,7 +8,7 @@ vector<vector<int>> dx(nmax+5);
 int init[nmax+5], dim[nmax+5], par[nmax+5], nxt[nmax+5], niv[nmax+5];
 
 int in[nmax+5], out[nmax+5], timer = 1, v[nmax+5];
-int aint[4*nmax+5];
+int aint[2*nmax+5];
 
 void dfs_dim(int node) {
     dim[node] = 1;
