@@ -20,7 +20,7 @@ void strongconnect(int node) {
             lowlink[node] = min(lowlink[node], lowlink[next]);
         }
         else if(onstack[next])
-            lowlink[node] = min(lowlink[node], lowlink[next]);
+            lowlink[node] = min(lowlink[node], idx[next]);
     }
 
     if(idx[node] == lowlink[node]) {
